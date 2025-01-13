@@ -6,7 +6,6 @@
 package net.neoforged.neoforge.client.event;
 
 import com.mojang.blaze3d.pipeline.MainTarget;
-import com.mojang.blaze3d.pipeline.RenderTarget;
 import net.neoforged.bus.api.Event;
 import net.neoforged.bus.api.ICancellableEvent;
 import net.neoforged.fml.LogicalSide;
@@ -14,13 +13,11 @@ import net.neoforged.fml.event.IModBusEvent;
 import org.jetbrains.annotations.ApiStatus;
 
 /**
- * Fired when configuring the main {@linkplain RenderTarget render target}.
- * <p>
- * This event fires during startup when the {@link MainTarget} is constructed.
+ * Fired when configuring the {@linkplain MainTarget main render target} during startup.
  * <p>
  * This event is not {@linkplain ICancellableEvent cancellable}.
  * <p>
- * This event is fired on the mod-speciffic event bus, only on the {@linkplain LogicalSide#CLIENT logical client}.
+ * This event is fired on the mod-specific event bus, only on the {@linkplain LogicalSide#CLIENT logical client}.
  */
 public class ConfigureMainRenderTargetEvent extends Event implements IModBusEvent {
     private final boolean useDepth;
@@ -30,8 +27,8 @@ public class ConfigureMainRenderTargetEvent extends Event implements IModBusEven
     private final int height;
 
     @ApiStatus.Internal
-    public ConfigureMainRenderTargetEvent(boolean useDepth, int width, int height) {
-        this.useDepth = useDepth;
+    public ConfigureMainRenderTargetEvent(int width, int height) {
+        this.useDepth = true;
         this.useStencil = false;
 
         this.width = width;
@@ -39,7 +36,7 @@ public class ConfigureMainRenderTargetEvent extends Event implements IModBusEven
     }
 
     /**
-     * Returns whether the depth buffer is enabled.
+     * Returns whether the depth buffer was enabled.
      *
      * @return <code>true</code>, if the depth buffer is enabled, or <code>false</code> otherwise.
      */
@@ -48,7 +45,7 @@ public class ConfigureMainRenderTargetEvent extends Event implements IModBusEven
     }
 
     /**
-     * Returns whether the stencil buffer is enabled.
+     * Returns whether the stencil buffer was requested.
      *
      * @return <code>true</code>, if the stencil buffer is enabled, or <code>false</code> otherwise.
      */

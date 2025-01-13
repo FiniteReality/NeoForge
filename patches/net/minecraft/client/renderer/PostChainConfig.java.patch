@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/PostChainConfig.java
 +++ b/net/minecraft/client/renderer/PostChainConfig.java
-@@ -108,13 +_,18 @@
+@@ -108,7 +_,11 @@
      }
  
      @OnlyIn(Dist.CLIENT)
@@ -13,11 +13,3 @@
          public static final Codec<PostChainConfig.TargetInput> CODEC = RecordCodecBuilder.create(
              p_363892_ -> p_363892_.group(
                          Codec.STRING.fieldOf("sampler_name").forGetter(PostChainConfig.TargetInput::samplerName),
-                         ResourceLocation.CODEC.fieldOf("target").forGetter(PostChainConfig.TargetInput::targetId),
-                         Codec.BOOL.optionalFieldOf("use_depth_buffer", Boolean.valueOf(false)).forGetter(PostChainConfig.TargetInput::useDepthBuffer),
--                        Codec.BOOL.optionalFieldOf("bilinear", Boolean.valueOf(false)).forGetter(PostChainConfig.TargetInput::bilinear)
-+                        Codec.BOOL.optionalFieldOf("bilinear", Boolean.valueOf(false)).forGetter(PostChainConfig.TargetInput::bilinear),
-+                        Codec.BOOL.optionalFieldOf("neoforge:use_stencil_buffer", Boolean.valueOf(false)).forGetter(PostChainConfig.TargetInput::useStencilBuffer)
-                     )
-                     .apply(p_363892_, PostChainConfig.TargetInput::new)
-         );

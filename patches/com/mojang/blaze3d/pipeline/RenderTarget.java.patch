@@ -1,6 +1,6 @@
 --- a/com/mojang/blaze3d/pipeline/RenderTarget.java
 +++ b/com/mojang/blaze3d/pipeline/RenderTarget.java
-@@ -25,17 +_,31 @@
+@@ -25,17 +_,34 @@
      public int viewWidth;
      public int viewHeight;
      public final boolean useDepth;
@@ -12,6 +12,9 @@
      private final float[] clearChannels = Util.make(() -> new float[]{1.0F, 1.0F, 1.0F, 0.0F});
      public int filterMode;
  
++    // If this is true, we can use stencil texture formats rather than combined depth-stencil textures.
++    private final boolean stencilTextureSupported;
++
      public RenderTarget(boolean p_166199_) {
 -        this.useDepth = p_166199_;
 +        this(p_166199_, false);
@@ -26,9 +29,9 @@
 +
 +        if (!useDepth && useStencil) {
 +            var capabilities = org.lwjgl.opengl.GL.getCapabilities();
-+            if (!capabilities.GL_ARB_texture_stencil8 && !capabilities.OpenGL44) {
-+                throw new UnsupportedOperationException("Stencil-only buffers require GL_ARB_texture_stencil8 OR OpenGL 4.4");
-+            }
++            stencilTextureSupported = capabilities.GL_ARB_texture_stencil8 || capabilities.OpenGL44;
++        } else {
++            stencilTextureSupported = false;
 +        }
      }
  
@@ -68,7 +71,7 @@
 +                    GlStateManager._texParameter(3553, 10243, 33071);
 +                }
 +
-+                if (this.useDepth) {
++                if (this.useDepth || !stencilTextureSupported) {
 +                    // Use a combined format for both depth and stencil.
 +                    GlStateManager._texImage2D(
 +                        org.lwjgl.opengl.GL32.GL_TEXTURE_2D,
@@ -80,7 +83,7 @@
 +                        org.lwjgl.opengl.GL32.GL_UNSIGNED_INT_24_8,
 +                        null);
 +                } else {
-+                    // Otherwise, we can use a separate format. Testing for this was done in the constructor already.
++                    // Otherwise, we can use a separate format.
 +                    GlStateManager._texImage2D(
 +                        org.lwjgl.opengl.GL32.GL_TEXTURE_2D,
 +                        0,
