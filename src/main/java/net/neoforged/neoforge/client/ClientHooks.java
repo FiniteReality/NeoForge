@@ -281,8 +281,19 @@ public class ClientHooks {
         profiler.pop();
     }
 
+    @Deprecated(forRemoval = true, since = "21.4")
     public static void dispatchRenderStage(RenderType renderType, LevelRenderer levelRenderer, Matrix4f modelViewMatrix, Matrix4f projectionMatrix, int renderTick, Camera camera, Frustum frustum) {
-        RenderLevelStageEvent.Stage stage = RenderLevelStageEvent.Stage.fromRenderType(renderType);
+        dispatchAfterRenderStage(renderType, levelRenderer, modelViewMatrix, projectionMatrix, renderTick, camera, frustum);
+    }
+
+    public static void dispatchBeforeRenderStage(RenderType renderType, LevelRenderer levelRenderer, Matrix4f modelViewMatrix, Matrix4f projectionMatrix, int renderTick, Camera camera, Frustum frustum) {
+        RenderLevelStageEvent.Stage stage = RenderLevelStageEvent.Stage.stageBeforeRenderType(renderType);
+        if (stage != null)
+            dispatchRenderStage(stage, levelRenderer, null, modelViewMatrix, projectionMatrix, renderTick, camera, frustum);
+    }
+
+    public static void dispatchAfterRenderStage(RenderType renderType, LevelRenderer levelRenderer, Matrix4f modelViewMatrix, Matrix4f projectionMatrix, int renderTick, Camera camera, Frustum frustum) {
+        RenderLevelStageEvent.Stage stage = RenderLevelStageEvent.Stage.stageAfterRenderType(renderType);
         if (stage != null)
             dispatchRenderStage(stage, levelRenderer, null, modelViewMatrix, projectionMatrix, renderTick, camera, frustum);
     }

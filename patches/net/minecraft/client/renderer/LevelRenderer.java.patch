@@ -47,14 +47,20 @@
              this.renderSectionLayer(RenderType.cutout(), d0, d1, d2, p_362420_, p_361272_);
              if (this.level.effects().constantAmbientLight()) {
                  Lighting.setupNetherLevel();
-@@ -603,6 +_,7 @@
+@@ -601,10 +_,13 @@
+             MultiBufferSource.BufferSource multibuffersource$buffersource = this.renderBuffers.bufferSource();
+             MultiBufferSource.BufferSource multibuffersource$buffersource1 = this.renderBuffers.crumblingBufferSource();
              p_362234_.popPush("entities");
++            net.neoforged.neoforge.client.ClientHooks.dispatchRenderStage(net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage.BEFORE_ENTITIES, this, posestack, p_362420_, p_361272_, this.ticks, p_363453_, p_366590_);
              this.renderEntities(posestack, multibuffersource$buffersource, p_363453_, p_360931_, this.visibleEntities);
              multibuffersource$buffersource.endLastBatch();
 +            net.neoforged.neoforge.client.ClientHooks.dispatchRenderStage(net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage.AFTER_ENTITIES, this, posestack, p_362420_, p_361272_, this.ticks, p_363453_, p_366590_);
              this.checkPoseStack(posestack);
              p_362234_.popPush("blockentities");
++            net.neoforged.neoforge.client.ClientHooks.dispatchRenderStage(net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage.BEFORE_BLOCK_ENTITIES, this, posestack, p_362420_, p_361272_, this.ticks, p_363453_, p_366590_);
              this.renderBlockEntities(posestack, multibuffersource$buffersource, multibuffersource$buffersource1, p_363453_, f);
+             multibuffersource$buffersource.endLastBatch();
+             this.checkPoseStack(posestack);
 @@ -619,6 +_,7 @@
              multibuffersource$buffersource.endBatch(Sheets.hangingSignSheet());
              multibuffersource$buffersource.endBatch(Sheets.chestSheet());
@@ -91,6 +97,14 @@
          FramePass framepass = p_363357_.addPass("particles");
          if (this.targets.particles != null) {
              this.targets.particles = framepass.readsAndWrites(this.targets.particles);
+@@ -671,6 +_,7 @@
+         ResourceHandle<RenderTarget> resourcehandle = this.targets.main;
+         ResourceHandle<RenderTarget> resourcehandle1 = this.targets.particles;
+         framepass.executes(() -> {
++            net.neoforged.neoforge.client.ClientHooks.dispatchRenderStage(net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage.BEFORE_PARTICLES, this, null, modelViewMatrix, projectionMatrix, this.ticks, p_365299_, getFrustum());
+             RenderSystem.setShaderFog(p_362149_);
+             if (resourcehandle1 != null) {
+                 resourcehandle1.get().setClearColor(0.0F, 0.0F, 0.0F, 0.0F);
 @@ -678,7 +_,8 @@
                  resourcehandle1.get().copyDepthFrom(resourcehandle.get());
              }
@@ -122,7 +136,11 @@
          int i = this.minecraft.options.getEffectiveRenderDistance() * 16;
          float f = this.minecraft.gameRenderer.getDepthFar();
          FramePass framepass = p_364025_.addPass("weather");
-@@ -724,6 +_,7 @@
+@@ -721,9 +_,11 @@
+         }
+ 
+         framepass.executes(() -> {
++            net.neoforged.neoforge.client.ClientHooks.dispatchRenderStage(net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage.BEFORE_PARTICLES, this, null, modelViewMatrix, projectionMatrix, this.ticks, camera, getFrustum());
              RenderSystem.setShaderFog(p_360974_);
              MultiBufferSource.BufferSource multibuffersource$buffersource = this.renderBuffers.bufferSource();
              this.weatherEffectRenderer.render(this.minecraft.level, multibuffersource$buffersource, this.ticks, p_362434_, p_360771_);
@@ -190,11 +208,19 @@
                      if (flag != p_361698_) {
                          return;
                      }
+@@ -984,6 +_,7 @@
+         ObjectListIterator<SectionRenderDispatcher.RenderSection> objectlistiterator = this.visibleSections
+             .listIterator(flag ? 0 : this.visibleSections.size());
+         p_294513_.setupRenderState();
++        net.neoforged.neoforge.client.ClientHooks.dispatchBeforeRenderStage(p_294513_, this, p_294782_, p_324517_, this.ticks, this.minecraft.gameRenderer.getMainCamera(), this.getFrustum());
+         CompiledShaderProgram compiledshaderprogram = RenderSystem.getShader();
+         if (compiledshaderprogram == null) {
+             p_294513_.clearRenderState();
 @@ -1019,6 +_,7 @@
              compiledshaderprogram.clear();
              VertexBuffer.unbind();
              zone.close();
-+            net.neoforged.neoforge.client.ClientHooks.dispatchRenderStage(p_294513_, this, p_294782_, p_324517_, this.ticks, this.minecraft.gameRenderer.getMainCamera(), this.getFrustum());
++            net.neoforged.neoforge.client.ClientHooks.dispatchAfterRenderStage(p_294513_, this, p_294782_, p_324517_, this.ticks, this.minecraft.gameRenderer.getMainCamera(), this.getFrustum());
              p_294513_.clearRenderState();
          }
      }
@@ -214,10 +240,11 @@
          FogType fogtype = p_362177_.getFluidInCamera();
          if (fogtype != FogType.POWDER_SNOW && fogtype != FogType.LAVA && !this.doesMobEffectBlockSky(p_362177_)) {
              DimensionSpecialEffects dimensionspecialeffects = this.level.effects();
-@@ -1068,6 +_,7 @@
+@@ -1068,6 +_,8 @@
                  FramePass framepass = p_362870_.addPass("sky");
                  this.targets.main = framepass.readsAndWrites(this.targets.main);
                  framepass.executes(() -> {
++                    net.neoforged.neoforge.client.ClientHooks.dispatchRenderStage(net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage.BEFORE_SKY, this, null, modelViewMatrix, projectionMatrix, this.ticks, p_362177_, getFrustum());
 +                    if (!level.effects().renderSky(level, ticks, p_363799_, modelViewMatrix, p_362177_, projectionMatrix, () -> RenderSystem.setShaderFog(p_364999_))) {
                      RenderSystem.setShaderFog(p_364999_);
                      if (dimensionspecialeffects$skytype == DimensionSpecialEffects.SkyType.END) {

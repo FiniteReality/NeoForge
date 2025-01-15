@@ -54,9 +54,12 @@
                  } catch (Throwable throwable1) {
                      CrashReport crashreport1 = CrashReport.forThrowable(throwable1, "Rendering screen");
                      CrashReportCategory crashreportcategory1 = crashreport1.addCategory("Screen render details");
-@@ -689,6 +_,8 @@
+@@ -688,7 +_,11 @@
+         Matrix4f matrix4f2 = new Matrix4f().rotation(quaternionf);
          this.minecraft.levelRenderer.prepareCullFrustum(camera.getPosition(), matrix4f2, matrix4f1);
          this.minecraft.getMainRenderTarget().bindWrite(true);
++        profilerfiller.popPush("neoforge_render_first");
++        net.neoforged.neoforge.client.ClientHooks.dispatchRenderStage(net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage.BEFORE_LEVEL, this.minecraft.levelRenderer, null, matrix4f1, matrix4f, this.minecraft.levelRenderer.getTicks(), camera, this.minecraft.levelRenderer.getFrustum());
          this.minecraft.levelRenderer.renderLevel(this.resourcePool, p_348589_, flag, camera, this, matrix4f2, matrix4f);
 +        profilerfiller.popPush("neoforge_render_last");
 +        net.neoforged.neoforge.client.ClientHooks.dispatchRenderStage(net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage.AFTER_LEVEL, this.minecraft.levelRenderer, null, matrix4f1, matrix4f, this.minecraft.levelRenderer.getTicks(), camera, this.minecraft.levelRenderer.getFrustum());
